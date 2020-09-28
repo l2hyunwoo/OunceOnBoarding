@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.ounceonboarding.R
+import kotlinx.android.synthetic.main.activity_main.*
 
 private const val NUM_PAGES = 3
 
@@ -21,6 +22,7 @@ class MainActivity : FragmentActivity() {
 
         val pagerAdapter = ScreenSlidePagerAdapter(this)
         vp_slider.adapter = pagerAdapter
+        di_tutorial.setViewPager2(vp_slider)
     }
 
     private inner class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
