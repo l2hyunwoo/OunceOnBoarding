@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">OunceOnBoarding</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="kakao_app_key">76add9f77e0e2685546e858a57ec55d7</string>
 </resources>
