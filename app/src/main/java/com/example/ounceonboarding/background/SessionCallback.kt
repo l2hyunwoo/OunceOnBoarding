@@ -21,7 +21,6 @@ class SessionCallback : ISessionCallback {
     override fun onSessionOpenFailed(exception: KakaoException) {
         Log.e("SessionCallback :: ", "onSessionOpenFailed : " + exception.message)
     }
-
     // 사용자 정보 요청
     fun requestMe() {
         UserManagement.getInstance()
@@ -38,7 +37,6 @@ class SessionCallback : ISessionCallback {
                     Log.i("KAKAO_API", "사용자 아이디: " + result.id)
                     val kakaoAccount = result.kakaoAccount
                     if (kakaoAccount != null) {
-
                         // 이메일
                         val email = kakaoAccount.email
                         if (email != null) {

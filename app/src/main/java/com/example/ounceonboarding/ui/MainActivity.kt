@@ -1,12 +1,11 @@
 package com.example.ounceonboarding.ui
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Base64
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -16,18 +15,18 @@ import com.example.ounceonboarding.R
 import com.example.ounceonboarding.background.SessionCallback
 import com.kakao.auth.AuthType
 import com.kakao.auth.Session
-import com.kakao.sdk.auth.LoginClient
-import com.kakao.sdk.auth.model.OAuthToken
-import com.kakao.sdk.common.util.Utility
+import com.kakao.network.ErrorResult
+import com.kakao.usermgmt.UserManagement
+import com.kakao.usermgmt.callback.LogoutResponseCallback
+import com.kakao.usermgmt.callback.UnLinkResponseCallback
 import kotlinx.android.synthetic.main.activity_main.*
-import java.security.MessageDigest
-import java.util.*
 
 private const val NUM_PAGES = 3
 
 class MainActivity : FragmentActivity() {
 
     private lateinit var vp_slider : ViewPager2
+    private var sessionCallback = SessionCallback()
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +58,6 @@ class MainActivity : FragmentActivity() {
         di_tutorial.setViewPager2(vp_slider)
 
         val session = Session.getCurrentSession()
-        val sessionCallback = SessionCallback()
         session.addCallback(sessionCallback)
 
         btn_kakao_login.setOnClickListener(object : View.OnClickListener{
@@ -68,8 +66,42 @@ class MainActivity : FragmentActivity() {
             }
         })
 
-        
+//        btn_kakao_logout.setOnClickListener(object : View.OnClickListener{
+//            override fun onClick(p0: View?) {
+//                Log.d("KAKAO_API", "Logout Click Listener")
+//                UserManagement.getInstance().requestLogout(object: LogoutResponseCallback() {
+//                    override fun onCompleteLogout() {
+//                        Log.d("KAKAO_API", "Logout Click Listener 2")
+//                        Toast.makeText(this@MainActivity, "LogOut", Toast.LENGTH_SHORT).show()
+//                    }
+//
+//                })
+//            }
+//
+//        })
+        btn_kakao_logout.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(p0: View?) {
+                UserManagement.getInstance().requestUnlink(object : UnLinkResponseCallback() {
+                    override fun onSuccess(result: Long?) {
+                        Toast.makeText(this@MainActivity, "로그아웃 되었습니다", Toast.LENGTH_SHORT).show()
+                    }
 
+                    override fun onSessionClosed(errorResult: ErrorResult?) {
+                        TODO("Not yet implemented")
+                    }
+
+                })
+            }
+
+        })
+
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        Session.getCurrentSession().removeCallback(sessionCallback)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
