@@ -1,6 +1,8 @@
 package com.example.ounceonboarding.background
 
 import android.util.Log
+import com.example.ounceonboarding.data.AccountViewModel
+import com.example.ounceonboarding.data.ProfileInformation
 import com.kakao.auth.ISessionCallback
 import com.kakao.network.ErrorResult
 import com.kakao.usermgmt.UserManagement
@@ -13,8 +15,17 @@ import com.kakao.util.exception.KakaoException
 
 class SessionCallback : ISessionCallback {
     // 로그인에 성공한 상태
+    private var mName : String = ""
+    private var mMail : String = ""
+    private var mProfileImage : String = ""
+
     override fun onSessionOpened() {
         requestMe()
+    }
+
+    fun getInfo() : ProfileInformation {
+        val infoList = ProfileInformation(mName, mMail, mProfileImage)
+        return infoList
     }
 
     // 로그인에 실패한 상태
@@ -40,6 +51,7 @@ class SessionCallback : ISessionCallback {
                         // 이메일
                         val email = kakaoAccount.email
                         if (email != null) {
+                            mMail = email
                             Log.i("KAKAO_API", "email: $email")
                         } else if (kakaoAccount.emailNeedsAgreement() == OptionalBoolean.TRUE) {
                             // 동의 요청 후 이메일 획득 가능
@@ -51,6 +63,8 @@ class SessionCallback : ISessionCallback {
                         // 프로필
                         val profile: Profile? = kakaoAccount.profile
                         if (profile != null) {
+                            mName = profile.nickname
+                            mProfileImage = profile.profileImageUrl
                             Log.d("KAKAO_API", "nickname: " + profile.getNickname())
                             Log.d("KAKAO_API", "profile image: " + profile.getProfileImageUrl())
                             Log.d("KAKAO_API", "thumbnail image: " + profile.getThumbnailImageUrl())
