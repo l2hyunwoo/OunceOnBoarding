@@ -57,6 +57,10 @@ dependencies {
     implementation "org.koin:koin-core-ext:$koin_version"
     // Koin for Android
     implementation "org.koin:koin-android:$koin_version"
+
+    implementation "androidx.lifecycle:lifecycle-viewmodel:2.2.0"
+    implementation "androidx.activity:activity-ktx:1.1.0"
+
     kapt "com.github.bumptech.glide:compiler:$glide_version"
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

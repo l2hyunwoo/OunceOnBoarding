@@ -13,11 +13,11 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.ounceonboarding.R
 import com.example.ounceonboarding.background.SessionCallback
+import com.example.ounceonboarding.data.ProfileInformation
 import com.kakao.auth.AuthType
 import com.kakao.auth.Session
 import com.kakao.network.ErrorResult
 import com.kakao.usermgmt.UserManagement
-import com.kakao.usermgmt.callback.LogoutResponseCallback
 import com.kakao.usermgmt.callback.UnLinkResponseCallback
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -26,6 +26,7 @@ private const val NUM_PAGES = 3
 class MainActivity : FragmentActivity() {
 
     private lateinit var vp_slider : ViewPager2
+    private var profileInfo : ProfileInformation? = null
     private var sessionCallback = SessionCallback()
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +63,19 @@ class MainActivity : FragmentActivity() {
 
         btn_kakao_login.setOnClickListener(object : View.OnClickListener{
             override fun onClick(view: View?) {
-                session.open(AuthType.KAKAO_LOGIN_ALL, this@MainActivity)
+                //session.open(AuthType.KAKAO_LOGIN_ALL, this@MainActivity)
+                if(profileInfo == null) {
+                    Log.d("KAKAO_API - before", "$profileInfo")
+                    profileInfo = sessionCallback.getInfo()
+                }
+                if(profileInfo != null) {
+                    Log.d("KAKAO_API - after", "$profileInfo")
+                    val intent = Intent(view!!.context, ProfileActivity::class.java)
+                    intent.putExtra("profile", profileInfo)
+                    view.context.startActivity(intent)
+                }
+
+
             }
         })
 
@@ -83,11 +96,17 @@ class MainActivity : FragmentActivity() {
             override fun onClick(p0: View?) {
                 UserManagement.getInstance().requestUnlink(object : UnLinkResponseCallback() {
                     override fun onSuccess(result: Long?) {
+                        if(profileInfo != null)
+                            profileInfo = null
+                        Log.d("KAKAO_API - delete info", "$profileInfo")
                         Toast.makeText(this@MainActivity, "로그아웃 되었습니다", Toast.LENGTH_SHORT).show()
                     }
 
                     override fun onSessionClosed(errorResult: ErrorResult?) {
-                        TODO("Not yet implemented")
+                        if(profileInfo != null)
+                            profileInfo = null
+                        Log.d("KAKAO_API - delete info", "$profileInfo")
+                        Toast.makeText(this@MainActivity, "에러가 발생했습니다", Toast.LENGTH_SHORT).show()
                     }
 
                 })
